@@ -1,0 +1,51 @@
+{* Toast notifications — auto-dismissing Bootstrap toasts *}
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11000;">
+	{foreach $toasts as $toast}
+	{var $icon = match($toast['type']) {
+		'success' => 'bi-check-circle-fill',
+		'danger' => 'bi-exclamation-triangle-fill',
+		'warning' => 'bi-exclamation-circle-fill',
+		default => 'bi-info-circle-fill',
+	}}
+	{var $color = match($toast['type']) {
+		'success' => '#22c55e',
+		'danger' => '#ef4444',
+		'warning' => '#f59e0b',
+		default => '#6366f1',
+	}}
+	<div class="toast show nnotify-toast" role="alert" data-bs-autohide="true" data-bs-delay="4000"
+		style="border-left: 4px solid {$color}; background: #fff; box-shadow: 0 8px 30px rgba(0,0,0,.12); border-radius: 10px; overflow: hidden; animation: nnotify-slidein .35s ease-out;">
+		<div class="toast-body d-flex align-items-center gap-2 py-3 pe-4">
+			<i class="bi {$icon}" style="color: {$color}; font-size: 1.25rem;"></i>
+			<span style="font-weight: 500; flex: 1;">{$toast['message']}</span>
+			<button type="button" class="btn-close btn-close-sm" data-bs-dismiss="toast" aria-label="Close" style="font-size: .65rem;"></button>
+		</div>
+	</div>
+	{/foreach}
+</div>
+
+{if count($toasts) > 0}
+<style>
+@keyframes nnotify-slidein {
+	from { transform: translateX(100%); opacity: 0; }
+	to { transform: translateX(0); opacity: 1; }
+}
+.nnotify-toast {
+	transition: opacity .3s ease, transform .3s ease;
+}
+.nnotify-toast.hiding {
+	opacity: 0 !important;
+	transform: translateX(50px);
+}
+</style>
+<script n:nonce>
+(function() {
+	document.querySelectorAll('.nnotify-toast').forEach(function(toast) {
+		setTimeout(function() {
+			toast.classList.add('hiding');
+			setTimeout(function() { toast.remove(); }, 350);
+		}, 4000);
+	});
+})();
+</script>
+{/if}
